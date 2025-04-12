@@ -20,9 +20,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 🧪 Build & Run Tests with Coverage
+      - name: 🛠️ Build & Run Tests with Coverage
         working-directory: User_Service/User_Service
         run: mvn clean verify jacoco:report
+
+      - name: 🔍 Debug Secrets (temporary)
+        run: echo "Secret SONAR_TOKEN loaded successfully"
+        env:
+          TEST_SECRET: ${{ secrets.SONAR_TOKEN }}
 
       - name: 🧼 SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v1.0.0
