@@ -14,17 +14,16 @@ jobs:
       - name: ✅ Checkout Code
         uses: actions/checkout@v3
 
-      - name: ☕ Setup Java 17
+      - name: ☕ Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 🧪 Build, Test, and Generate Coverage
-        working-directory: User_Service/User_Service
-        run: mvn clean verify jacoco:report
+      - name: 🔨 Build, Test, and Generate Coverage
+        run: mvn -f User_Service/User_Service/pom.xml clean verify jacoco:report
 
-      - name: 🧼 SonarCloud Scan
+      - name: 🧪 SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: User_Service/User_Service
@@ -45,7 +44,7 @@ jobs:
           source: User_Service/User_Service/target/User_Service-0.0.1-SNAPSHOT.jar
           target: /home/ubuntu/user-service.jar
 
-      - name: 🚀 Restart User Service on EC2
+      - name: 🔁 Restart User Service on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -54,13 +53,13 @@ jobs:
           script: |
             echo "🔄 Stopping existing service..."
             pkill -f 'user-service.jar' || echo "No process to kill"
-        
+
             echo "🚀 Starting new service in background..."
             nohup java -jar /home/ubuntu/user-service.jar > user-service.log 2>&1 &
             sleep 3
-        
+
             echo "📄 Recent logs:"
             tail -n 10 user-service.log || echo "Log not yet created"
-        
+
             echo "✅ Deployment complete!"
-        
+
