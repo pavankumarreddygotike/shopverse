@@ -1,4 +1,4 @@
-name: Deploy User Service
+name: CI/CD - User Service
 
 on:
   push:
@@ -7,22 +7,34 @@ on:
       - 'User_Service/User_Service/**'
 
 jobs:
-  deploy:
+  build-test-sonar-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: ✅ Checkout Code
         uses: actions/checkout@v3
 
-      - name: ☕ Setup Java
+      - name: ☕ Setup Java 17
         uses: actions/setup-java@v3
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: 🛠️ Build Project
+      - name: 🧪 Build, Test, and Generate Coverage
         working-directory: User_Service/User_Service
-        run: mvn clean install
+        run: mvn clean verify jacoco:report
+
+      - name: 🧼 SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: User_Service/User_Service
+          args: >
+            -Dsonar.projectKey=pavankumarreddygotike_shopverse
+            -Dsonar.organization=pavankumarreddygotike
+            -Dsonar.java.binaries=target
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
 
       - name: 📦 Upload JAR to EC2
         uses: appleboy/scp-action@v0.1.4
@@ -40,9 +52,14 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            echo "Stopping existing service..."
-            pkill -f 'user-service.jar' || true
+            echo "🔄 Stopping existing service..."
+            pkill -f 'user-service.jar' || echo "No process to kill"
 
-            echo "Starting new service in background..."
+            echo "🚀 Starting new service in background..."
             nohup java -jar /home/ubuntu/user-service.jar > user-service.log 2>&1 &
+            sleep 3
+
+            echo "📄 Recent logs:"
+            tail -n 10 user-service.log || echo "Log not yet created"
+
             echo "✅ Deployment complete!"
