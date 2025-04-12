@@ -1,4 +1,4 @@
-name: CI/CD - User Service
+name: Deploy User Service
 
 on:
   push:
@@ -7,34 +7,22 @@ on:
       - 'User_Service/User_Service/**'
 
 jobs:
-  build-test-sonar-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: ✅ Checkout Code
         uses: actions/checkout@v3
 
-      - name: ☕ Setup Java 17
+      - name: ☕ Setup Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: 17
 
-      - name: 🧪 Build, Test, and Generate Coverage Report
+      - name: 🛠️ Build Project
         working-directory: User_Service/User_Service
-        run: mvn clean verify jacoco:report
-
-      - name: 🧼 SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          projectBaseDir: User_Service/User_Service
-          args: >
-            -Dsonar.projectKey=pavankumarreddygotike_shopverse
-            -Dsonar.organization=pavankumarreddygotike
-            -Dsonar.java.binaries=target
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
+        run: mvn clean install
 
       - name: 📦 Upload JAR to EC2
         uses: appleboy/scp-action@v0.1.4
