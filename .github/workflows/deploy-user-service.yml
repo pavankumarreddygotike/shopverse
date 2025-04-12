@@ -36,6 +36,7 @@ jobs:
           args: >
             -Dsonar.projectKey=pavankumarreddygotike_shopverse
             -Dsonar.organization=pavankumarreddygotike
+            -Dsonar.java.binaries=target
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
