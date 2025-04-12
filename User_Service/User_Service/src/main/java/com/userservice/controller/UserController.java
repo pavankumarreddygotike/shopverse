@@ -26,7 +26,6 @@ public class UserController {
         User saved = userService.register(user);
         System.out.println("Trigger Sonar");
         System.out.println("Trigger Sonar");
-        System.out.println("Trigger Sonar");
         return ResponseEntity.ok(saved);
     }
     @PostMapping("/login")
