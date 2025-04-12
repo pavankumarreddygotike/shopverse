@@ -34,8 +34,8 @@ jobs:
         with:
           projectBaseDir: User_Service/User_Service
           args: >
-            -Dsonar.projectKey=shopverse-user-service
-            -Dsonar.organization=keerthi-development
+            -Dsonar.projectKey=pavankumarreddygotike_shopverse
+            -Dsonar.organization=pavankumarreddygotike
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
