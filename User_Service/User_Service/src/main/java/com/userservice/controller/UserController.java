@@ -32,6 +32,7 @@ public class UserController {
         Optional<User> u = userService.login(user.getUsername(), user.getPassword());
         if (u.isPresent()) {
             String token = jwtUtil.generateToken(u.get().getUsername());
+            System.out.println("Trigger EC2");
             return ResponseEntity.ok(Map.of("token", token));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
