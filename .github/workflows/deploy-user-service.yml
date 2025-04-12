@@ -20,10 +20,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 🔨 Build, Test, and Generate Coverage
-        run: mvn -f User_Service/User_Service/pom.xml clean verify jacoco:report
+      - name: 🧪 Build & Test
+        working-directory: User_Service/User_Service
+        run: mvn clean verify
 
-      - name: 🧪 SonarCloud Scan
+      - name: 🔍 SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: User_Service/User_Service
@@ -53,14 +54,12 @@ jobs:
           script: |
             echo "🔄 Stopping existing service..."
             pkill -f 'user-service.jar' || echo "No process to kill"
-        
+
             echo "🚀 Starting new service in background..."
             nohup java -jar /home/ubuntu/user-service.jar > user-service.log 2>&1 &
             sleep 3
-        
+
             echo "📄 Recent logs:"
             tail -n 10 user-service.log || echo "Log not yet created"
-        
-            echo "✅ Deployment complete!"
-        
 
+            echo "✅ Deployment complete!"
