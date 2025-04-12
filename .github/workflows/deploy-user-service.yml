@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 🧪 Build, Test, and Coverage Report
+      - name: 🧪 Build, Test, and Generate Coverage Report
         working-directory: User_Service/User_Service
         run: mvn clean verify jacoco:report
 
