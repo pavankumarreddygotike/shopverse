@@ -35,6 +35,7 @@ jobs:
           projectBaseDir: User_Service/User_Service
           args: >
             -Dsonar.projectKey=shopverse-user-service
+            -Dsonar.organization=keerthi-development
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
