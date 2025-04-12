@@ -45,21 +45,13 @@ jobs:
           source: User_Service/User_Service/target/User_Service-0.0.1-SNAPSHOT.jar
           target: /home/ubuntu/user-service.jar
 
-      - name: 🔁 Restart User Service on EC2
+      - name: 🖥️ Verify EC2 Connectivity
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            echo "🔄 Stopping existing service..."
-            pkill -f 'user-service.jar' || echo "No process to kill"
-
-            echo "🚀 Starting new service in background..."
-            nohup java -jar /home/ubuntu/user-service.jar > user-service.log 2>&1 &
-            sleep 3
-
-            echo "📄 Recent logs:"
-            tail -n 10 user-service.log || echo "Log not yet created"
-
-            echo "✅ Deployment complete!"
+            echo "✅ EC2 connected successfully!"
+            uptime
+            whoami
