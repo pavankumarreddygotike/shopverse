@@ -24,20 +24,20 @@ jobs:
         working-directory: User_Service/User_Service
         run: mvn clean verify jacoco:report
 
-      - name: 🔍 Debug Secrets (temporary)
-        run: echo "Secret SONAR_TOKEN loaded successfully"
+      - name: 🔍 Debug Secrets (optional)
+        run: echo "Secrets loaded successfully"
         env:
           TEST_SECRET: ${{ secrets.SONAR_TOKEN }}
 
       - name: 🧼 SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v1.0.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: User_Service/User_Service
           args: >
             -Dsonar.projectKey=shopverse-user-service
-            -Dsonar.host.url=https://sonarcloud.io
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
 
       - name: 🔥 Upload JAR to EC2
         uses: appleboy/scp-action@v0.1.4
