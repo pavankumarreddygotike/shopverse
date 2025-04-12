@@ -30,7 +30,7 @@ jobs:
           TEST_SECRET: ${{ secrets.SONAR_TOKEN }}
 
       - name: 🧼 SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v1.0.0
+        uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: User_Service/User_Service
           args: >
