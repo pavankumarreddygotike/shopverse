@@ -1,0 +1,53 @@
+name: CI/CD - User Service
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'user-service/**'
+
+jobs:
+  build-test-sonar-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: ✅ Checkout Code
+      uses: actions/checkout@v3
+
+    - name: ☕ Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: 📦 Build & Run Tests with Coverage
+      working-directory: user-service
+      run: mvn clean verify jacoco:report
+
+    - name: 🔍 SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v1.0.0
+      with:
+        projectBaseDir: user-service
+        args: >
+          -Dsonar.projectKey=shopverse-user-service
+          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+    - name: 📤 Upload JAR to EC2
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "user-service/target/user-service-0.0.1-SNAPSHOT.jar"
+        target: "/home/ubuntu/user-service.jar"
+
+    - name: 🚀 Restart App on EC2
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          pkill -f 'user-service.jar' || true
+          nohup java -jar /home/ubuntu/user-service.jar > user-logs.txt 2>&1 &
