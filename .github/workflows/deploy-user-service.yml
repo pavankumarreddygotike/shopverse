@@ -54,12 +54,13 @@ jobs:
           script: |
             echo "🔄 Stopping existing service..."
             pkill -f 'user-service.jar' || echo "No process to kill"
-
+        
             echo "🚀 Starting new service in background..."
             nohup java -jar /home/ubuntu/user-service.jar > user-service.log 2>&1 &
             sleep 3
-
+        
             echo "📄 Recent logs:"
             tail -n 10 user-service.log || echo "Log not yet created"
-
+        
             echo "✅ Deployment complete!"
+        
