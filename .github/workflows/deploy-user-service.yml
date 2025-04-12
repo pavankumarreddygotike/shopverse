@@ -58,7 +58,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             echo "Stopping existing service..."
-            pkill -f 'user-service.jar' || echo "No process found"
+            pkill -f 'user-service.jar' || true
       
             echo "Starting new service in background..."
             nohup java -jar /home/ubuntu/user-service.jar > user-service.log 2>&1 &
